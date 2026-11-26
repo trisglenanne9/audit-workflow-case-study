@@ -1,0 +1,27 @@
+# Never commit the firm's real material: recordings, spreadsheets, documents, real drawings
+*.m4a
+*.mp3
+*.wav
+*.mp4
+*.xlsx
+*.xlsm
+*.xls
+*.csv
+*.docx
+*.pdf
+*.drawio
+*.json
+
+# ...except the published video and the fictional sample the demo is built from
+!site/media/walkthrough.mp4
+!tooling/examples/sample-firm/*.drawio
+!tooling/examples/sample-firm/explorer.json
+
+# Local drafts (CV, LinkedIn, video script): never published
+drafts/
+# Original claude.ai copy of the page
+audit-workflow-case-study.html
+
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Case study: mapping an audit firm's end-to-end workflow across three business units, solo.">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Mapping an Audit Practice</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600&display=swap">
+<style>
+/* Type scale: two families (Archivo for headings and numbers, Inter for text), five sizes. */
+:root {
+  --bg: #f6f8f9;
+  --surface: #ffffff;
+  --ink: #14232e;
+  --muted: #56656f;
+  --line: #d8e0e4;
+  --lane: #eef3f5;
+  --accent: #0f6e7c;
+  --accent-soft: #dceff1;
+  --wait: #d58a1a;
+  --wait-soft: #fbedd5;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --t-h1: clamp(2rem, 5vw, 2.75rem);
+  --t-h2: 1.5rem;
+  --t-num: 2rem;
+  --t-body: 1rem;
+  --t-small: 0.875rem;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f171c; --surface: #16222a; --ink: #e4ecef; --muted: #9aabb4; --line: #2a3a44; --lane: #1b2a33;
+  --accent: #5cc2cf; --accent-soft: #173a40; --wait: #f0b14f; --wait-soft: #3a2c14; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f171c; --surface: #16222a; --ink: #e4ecef; --muted: #9aabb4; --line: #2a3a44; --lane: #1b2a33;
+  --accent: #5cc2cf; --accent-soft: #173a40; --wait: #f0b14f; --wait-soft: #3a2c14; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font: 400 var(--t-body)/1.6 var(--f-body); }
+.wrap { max-width: 64rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 1.25rem; }
+.col { max-width: 40rem; }
+.stack { display: grid; gap: 0.75rem; }
+h1, h2 { font-family: var(--f-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: var(--t-h1); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: var(--t-h2); font-weight: 700; }
+h3 { font: 600 var(--t-body)/1.3 var(--f-body); margin: 0; }
+p { margin: 0; }
+.small { font-size: var(--t-small); color: var(--muted); }
+.num { font: 800 var(--t-num)/1 var(--f-display); font-variant-numeric: tabular-nums; }
+
+header { padding-block: 3.5rem 2.5rem; border-bottom: 1px solid var(--line); }
+.lede { font-size: 1.125rem; color: var(--muted); max-width: 38rem; }
+.meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+.meta b { color: var(--ink); font-weight: 600; }
+
+section { padding-block: 2.75rem; border-bottom: 1px solid var(--line); }
+section:last-of-type { border-bottom: 0; }
+
+/* key figures */
+.figures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.fig { background: var(--surface); padding: 1.1rem 1rem; display: grid; gap: 0.35rem; align-content: start; }
+@media (max-width: 720px) { .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* method lane */
+.lane-scroll { overflow-x: auto; }
+.method { display: grid; grid-template-columns: repeat(6, minmax(9.5rem, 1fr)); gap: 0; min-width: 58rem; background: var(--lane); border: 1px solid var(--line); border-radius: 6px; }
+.step { position: relative; padding: 1rem 1rem 1.1rem; display: grid; gap: 0.45rem; align-content: start; border-right: 1px solid var(--line); }
+.step:last-child { border-right: 0; }
+.step .k { width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font: 700 0.78rem/1 var(--f-body); }
+.step h3 { font: 700 0.95rem/1.15 var(--f-display); }
+.step p { font-size: var(--t-small); color: var(--muted); line-height: 1.5; }
+.step:not(:last-child)::after { content: ""; position: absolute; top: 1.55rem; right: -6px; width: 10px; height: 10px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); transform: rotate(45deg); background: var(--lane); z-index: 1; }
+
+
+/* timeline */
+.tl { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1.25rem; display: grid; gap: 0.6rem; font-size: var(--t-small); }
+.tl-row { display: grid; grid-template-columns: minmax(8rem, 15rem) 1fr 3rem; gap: 0.75rem; align-items: center; }
+.tl-row .bar { height: 0.85rem; border-radius: 2px; }
+.bar.work { background: var(--accent); }
+.bar.wait { background: var(--wait); }
+.bar.int  { background: var(--muted); opacity: 0.55; }
+.tl-row .d { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 1rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legend i { width: 0.8rem; height: 0.8rem; border-radius: 2px; display: inline-block; }
+@media (max-width: 560px) { .tl-row { grid-template-columns: 1fr 3rem; } .tl-row .lab { grid-column: 1 / -1; } }
+
+/* findings */
+.findings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.finding { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1.1rem 1.2rem; display: grid; gap: 0.4rem; align-content: start; }
+.finding .num { color: var(--accent); }
+@media (max-width: 720px) { .findings { grid-template-columns: 1fr; } }
+
+/* explorer mock */
+.explorer { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.ex-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); font: 500 var(--t-small)/1 var(--f-body); }
+.ex-bar span { padding: 0.35rem 0.6rem; border-radius: 4px; color: var(--muted); }
+.ex-bar span.on { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+.ex-body { overflow-x: auto; padding: 1rem; }
+.ex-body svg { display: block; min-width: 40rem; width: 100%; height: auto; }
+
+
+/* links + video */
+a { color: var(--accent); }
+.btn { display: inline-block; padding: 0.6rem 1rem; border-radius: 6px; background: var(--accent); color: var(--bg); font-weight: 600; text-decoration: none; }
+.links a { font-weight: 600; text-decoration: none; margin-right: 1.25rem; }
+.video { margin: 0.5rem 0 0; max-width: 48rem; display: grid; gap: 0.4rem; }
+.video .frame { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; overflow: hidden; }
+.video video { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* solution proposal */
+.sub { font: 700 1.05rem/1.2 var(--f-display); margin-top: 0.5rem; }
+.order { margin: 0; padding-left: 1.4rem; display: grid; gap: 0.5rem; }
+.order li::marker { color: var(--accent); font-weight: 700; }
+.eyebrow { font: 600 0.72rem/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.opps { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.opp { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; padding-block: 0.9rem; border-bottom: 1px solid var(--line); }
+.opp h3 { font-size: 0.95rem; }
+.opp p { font-size: 0.92rem; color: var(--muted); }
+@media (max-width: 600px) { .opp { grid-template-columns: 1fr; gap: 0.3rem; } }
+
+.status { display: inline-flex; align-items: center; gap: 0.5rem; font: 600 0.75rem/1 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--wait); }
+.status::before { content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--wait); }
+.phases { display: flex; flex-wrap: wrap; gap: 0.5rem; font: 500 0.82rem/1 var(--f-body); }
+.phase { padding: 0.5rem 0.75rem; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--muted); }
+.phase.done { color: var(--ink); border-color: var(--accent); }
+.phase.now { color: var(--ink); border-color: var(--wait); background: var(--wait-soft); font-weight: 600; }
+
+
+.opp h3 { font: 700 0.95rem/1.15 var(--f-display); }
+
+footer { padding-block: 1.5rem 3rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Mapping an audit practice, end to end, as a team of one</h1>
+    <p class="lede">An audit firm knew its jobs ran late but not why. I interviewed every role, mapped the whole workflow, and tested each problem against 2,500+ job records.</p>
+    <p class="meta small"><span><b>Role</b> Sole analyst</span><span><b>When</b> Oct – Nov 2026</span><span><b>Tools</b> draw.io · Python · speech-to-text · Claude</span></p>
+    <p><a class="btn" href="demo/">Open the demo explorer →</a></p>
+    <figure class="video">
+      <div class="frame"><video controls preload="none" playsinline poster="media/poster.jpg" src="media/walkthrough.mp4"></video></div>
+      <figcaption class="small">1:30 walkthrough</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="figures">
+      <div class="fig"><span class="num">16</span><span class="small">workflow pages, 3 business units</span></div>
+      <div class="fig"><span class="num">394</span><span class="small">process steps</span></div>
+      <div class="fig"><span class="num">124</span><span class="small">hand-offs between teams</span></div>
+      <div class="fig"><span class="num">118</span><span class="small">problems, each traced to a source</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="col stack">
+      <h2>The problem</h2>
+      <p>A job passed through seven teams, each with its own logs. Nobody had the whole picture of where the time went.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="col stack">
+      <h2>Approach</h2>
+      <p>From recorded interviews to a reviewed, evidence-backed map.</p>
+    </div>
+    <div class="lane-scroll">
+      <div class="method">
+        <div class="step"><span class="k">1</span><h3>Interview by role</h3><p>Recorded sessions and walkthroughs with each role, plus written follow-ups over chat.</p></div>
+        <div class="step"><span class="k">2</span><h3>Transcribe twice</h3><p>Two speech-to-text models on every recording; where they disagreed, both readings went back to the owner.</p></div>
+        <div class="step"><span class="k">3</span><h3>Draw swimlanes</h3><p>One page per process, lanes by department then job title, one action per box.</p></div>
+        <div class="step"><span class="k">4</span><h3>Review rounds</h3><p>Manager comments tracked on the drawing with numbered tags and answered row by row.</p></div>
+        <div class="step"><span class="k">5</span><h3>Test against data</h3><p>Pain points checked against job logs, fee records and time reports. Counts only, no client data copied.</p></div>
+        <div class="step"><span class="k">6</span><h3>Publish explorer</h3><p>A generated website joins all pages, files and systems so anyone can follow a job across teams.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="col stack">
+      <h2>Fieldwork takes 6 days. The job takes 80.</h2>
+      <p class="small">Median calendar days per stage, about 2,500 jobs in one year-end cycle.</p>
+    </div>
+    <div class="tl" role="img" aria-label="Median days per stage of an audit job, from management accounts ready to report circulation, 80 days in total">
+      <div class="legend"><span><i style="background:var(--accent)"></i>Audit work</span><span><i style="background:var(--muted);opacity:.55"></i>Internal queue</span><span><i style="background:var(--wait)"></i>Waiting on client</span></div>
+      <div class="tl-row"><span class="lab">Accounts ready → job start</span><div><div class="bar int" style="width:calc(13/15*100%)"></div></div><span class="d">13 d</span></div>
+      <div class="tl-row"><span class="lab">Job start → fieldwork done</span><div><div class="bar work" style="width:calc(6/15*100%)"></div></div><span class="d">6 d</span></div>
+      <div class="tl-row"><span class="lab">Fieldwork done → 1st review</span><div><div class="bar int" style="width:calc(8/15*100%)"></div></div><span class="d">8 d</span></div>
+      <div class="tl-row"><span class="lab">1st review → points cleared</span><div><div class="bar work" style="width:calc(7/15*100%)"></div></div><span class="d">7 d</span></div>
+      <div class="tl-row"><span class="lab">Draft sent → client approves</span><div><div class="bar wait" style="width:calc(14/15*100%)"></div></div><span class="d">14 d</span></div>
+      <div class="tl-row"><span class="lab">Signing pages out → back</span><div><div class="bar wait" style="width:calc(15/15*100%)"></div></div><span class="d">15 d</span></div>
+      <div class="tl-row"><span class="lab">Partner signs → report circulated</span><div><div class="bar int" style="width:calc(6/15*100%)"></div></div><span class="d">6 d</span></div>
+      <p class="small">Stages overlap, so they don't add up to 80.</p>
+    </div>
+    <div class="findings">
+      <div class="finding"><span class="num">40%</span><p>of jobs started before the client confirmed the fee.</p></div>
+      <div class="finding"><span class="num">35%</span><p>of jobs ran 30+ days late, most often for internal reasons.</p></div>
+      <div class="finding"><span class="num">4×</span><p>signing pages changed hands about four times per job, on paper.</p></div>
+      <div class="finding"><span class="num">2 logs</span><p>held the same dates for each job; one team re-keyed the other's weekly.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="col stack">
+      <h2>A process explorer, not a 16-page PDF</h2>
+      <p>A script turns the drawings into a website where anyone can follow a job across teams. The demo uses a fictional firm.</p>
+      <p class="links"><a href="demo/">Open the demo explorer →</a><a href="https://github.com/trisglenanne9/audit-workflow-case-study/tree/main/tooling">See the code →</a></p>
+    </div>
+    <div class="explorer" aria-label="Illustration of the process explorer's big-picture view, with generic labels">
+      <div class="ex-bar"><span class="on">Big picture</span><span>Drawings</span><span>Files and systems</span><span>Walk through</span></div>
+      <div class="ex-body">
+        <svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+          <g fill="none" stroke="var(--line)"><rect x="10" y="10" width="200" height="230" rx="6" fill="var(--lane)"/><rect x="260" y="10" width="200" height="230" rx="6" fill="var(--lane)"/><rect x="510" y="10" width="200" height="230" rx="6" fill="var(--lane)"/></g>
+          <g font-size="10" font-weight="700" fill="var(--muted)" letter-spacing="1"><text x="24" y="32">HEAD-OFFICE SUPPORT</text><text x="274" y="32">AUDIT TEAMS</text><text x="524" y="32">CENTRAL SUPPORT</text></g>
+          <g fill="var(--surface)" stroke="var(--line)">
+            <rect x="24" y="48" width="172" height="40" rx="4"/><rect x="24" y="188" width="172" height="40" rx="4"/>
+            <rect x="274" y="48" width="172" height="40" rx="4"/><rect x="274" y="103" width="172" height="40" rx="4" stroke="var(--accent)" stroke-width="2"/><rect x="274" y="158" width="172" height="40" rx="4"/>
+            <rect x="524" y="48" width="172" height="40" rx="4"/><rect x="524" y="103" width="172" height="40" rx="4"/><rect x="524" y="158" width="172" height="40" rx="4"/>
+          </g>
+          <g font-size="11.5" fill="var(--ink)">
+            <text x="36" y="66" font-weight="600">Onboarding</text><text x="36" y="80" fill="var(--muted)" font-size="10">53 steps</text>
+            <text x="36" y="206" font-weight="600">Collection</text><text x="36" y="220" fill="var(--muted)" font-size="10">37 steps</text>
+            <text x="286" y="66" font-weight="600">Pricing and fee agreement</text><text x="286" y="80" fill="var(--muted)" font-size="10">29 steps</text>
+            <text x="286" y="121" font-weight="600">Main audit workflow</text><text x="286" y="135" fill="var(--muted)" font-size="10">95 steps</text>
+            <text x="286" y="176" font-weight="600">Billing and release</text><text x="286" y="190" fill="var(--muted)" font-size="10">34 steps</text>
+            <text x="536" y="66" font-weight="600">Attestation</text><text x="536" y="80" fill="var(--muted)" font-size="10">22 steps</text>
+            <text x="536" y="121" font-weight="600">Report binding</text><text x="536" y="135" fill="var(--muted)" font-size="10">18 steps</text>
+            <text x="536" y="176" font-weight="600">Release and delivery</text><text x="536" y="190" fill="var(--muted)" font-size="10">4 steps</text>
+          </g>
+          <g stroke="var(--accent)" stroke-width="1.5" fill="none"><path d="M196 68 H274"/><path d="M360 88 V103"/><path d="M446 113 H524 V88"/><path d="M524 133 H446"/><path d="M360 143 V158"/><path d="M274 188 H196 V208"/><path d="M446 178 H524"/></g>
+          <g font-size="9" font-weight="700" font-family="JetBrains Mono, monospace">
+            <circle cx="235" cy="68" r="8" fill="var(--surface)" stroke="var(--accent)"/><text x="235" y="71.5" text-anchor="middle" fill="var(--accent)">A</text>
+            <circle cx="485" cy="113" r="8" fill="var(--surface)" stroke="var(--accent)"/><text x="485" y="116.5" text-anchor="middle" fill="var(--accent)">T</text>
+            <circle cx="485" cy="133" r="8" fill="var(--surface)" stroke="var(--accent)"/><text x="485" y="136.5" text-anchor="middle" fill="var(--accent)">U</text>
+            <circle cx="485" cy="178" r="8" fill="var(--surface)" stroke="var(--accent)"/><text x="485" y="181.5" text-anchor="middle" fill="var(--accent)">S</text>
+            <circle cx="235" cy="188" r="8" fill="var(--surface)" stroke="var(--accent)"/><text x="235" y="191.5" text-anchor="middle" fill="var(--accent)">M</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="col stack">
+      <span class="eyebrow">Where it goes next</span>
+      <h2>Solution proposal</h2>
+      <span class="status">Proposal stage · Phase 1 next</span>
+      <p>Five root causes sit behind 9 problems.</p>
+    </div>
+    <div class="col opps">
+      <div class="opp"><h3>No single job record</h3><p>Staff link Excel files by hand.</p></div>
+      <div class="opp"><h3>Undefined hand-overs</h3><p>Between the audit team and central support.</p></div>
+      <div class="opp"><h3>Deadline in the wrong place</h3><p>The audit team owns it while the step waits on tax, head office or finance.</p></div>
+      <div class="opp"><h3>No fast route</h3><p>A standard case takes the same route as a difficult one.</p></div>
+      <div class="opp"><h3>Tools don't connect</h3><p>Built one at a time, they don't pass data on.</p></div>
+    </div>
+    <div class="col stack">
+      <h3 class="sub">Suggested order of work</h3>
+      <ol class="order">
+        <li><b>Tax fee wait.</b> Agreed turnaround plus an automatic reminder in the existing approval flow.</li>
+        <li><b>Paper hand-overs.</b> One cover sheet that travels with the pages. Report crossings between teams: 9 → 2.</li>
+        <li><b>Double logs.</b> Share the client ID across logs and read dates instead of re-keying. 8 manual steps removed.</li>
+        <li><b>Payments.</b> One route for payment slips and one payment report.</li>
+        <li><b>Stamp duty.</b> The request starts when the signed letter is saved.</li>
+        <li><b>Pricing.</b> A fee band the Audit Manager can approve: 8 steps → 3 for a standard fee. Awaiting a management decision.</li>
+        <li><b>New-client hand-over and claims.</b> Small fixes when the forms next change.</li>
+      </ol>
+    </div>
+    <div class="phases" aria-label="Project phases">
+      <span class="phase done">Interviews</span><span class="phase done">Workflow mapping</span><span class="phase now">Solution proposal</span><span class="phase">Automation Phase 1</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="small">Anonymised: the firm, people, clients and systems are not named. Figures are rounded medians and counts.</p>
+  </div>
+</footer>
+</body>
+</html>

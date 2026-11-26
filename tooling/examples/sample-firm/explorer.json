@@ -1,0 +1,45 @@
+{
+  "title": "Sample Audit Firm – Process Explorer",
+  "out": "../../../site/demo",
+  "showReview": false,
+  "workflows": [
+    {
+      "id": "aud",
+      "name": "Audit Workflow",
+      "desc": "The audit team's work from fee proposal to signed report",
+      "file": "audit-workflow.drawio"
+    },
+    {
+      "id": "cs",
+      "name": "Central Support",
+      "desc": "Attestation, binding and dispatch",
+      "file": "central-support.drawio"
+    }
+  ],
+  "tags": {
+    "aud": "AUD",
+    "cs": "CS"
+  },
+  "map": {
+    "aud-1": [
+      0,
+      0
+    ],
+    "aud-2": [
+      0,
+      1
+    ],
+    "cs-A": [
+      1,
+      1
+    ],
+    "aud-3": [
+      0,
+      2
+    ],
+    "cs-B": [
+      1,
+      2
+    ]
+  }
+}

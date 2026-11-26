@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Sample Audit Firm – Process Explorer</title>
+<script>
+/* use the light or dark choice made earlier in this browser before anything is drawn; otherwise follow the computer's setting */
+(function () { try { var t = localStorage.getItem('ape-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+</script>
+<link rel="stylesheet" href="style.css?v=20261126130428">
+</head>
+<body data-view="map">
+<header class="top">
+  <div class="brand">
+    <div class="btxt"><div class="t1">Sample Audit Firm – Process Explorer</div></div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" data-view="map" aria-selected="true"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2" width="4.5" height="4" rx="1"/><rect x="10" y="2" width="4.5" height="4" rx="1"/><rect x="5.7" y="10" width="4.5" height="4" rx="1"/><path d="M4 6v1.8h8V6M8 7.8V10"/></svg>Big picture</button>
+    <button role="tab" data-view="draw" aria-selected="false"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><path d="M1.5 5.5h13M6 5.5v9"/></svg>Drawings</button>
+    <button role="tab" data-view="files" aria-selected="false"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="1.5" width="12" height="13" rx="2"/><path d="M2 5.8h12M2 10.2h12M6.5 5.8v8.7"/></svg>Files and systems</button>
+  </nav>
+  <!-- the drawing tools sit in the top bar (Drawings view only); they were a row of their own above the drawing -->
+  <div class="ctools">
+    <button id="walkBtn" class="walkbtn" type="button" title="Go through this page one step at a time"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z"/></svg><span class="lbl">Walk through</span></button>
+    <button id="cmtBtn" class="cmtbtn" type="button" title="Add comments to this drawing" hidden><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3h11v7.5H7.2L4 13.2v-2.7H2.5z"/></svg><span class="lbl">Comments</span><span class="cnt" hidden></span></button>
+    <span class="zgrp">
+      <button id="zOut" title="Zoom out" aria-label="Zoom out">−</button>
+      <button id="zIn" title="Zoom in" aria-label="Zoom in">+</button>
+    </span>
+    <button id="zFit">Fit width</button>
+  </div>
+  <div class="search">
+    <svg class="sico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+    <input id="q" type="search" placeholder="Search" autocomplete="off" aria-label="Search">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <button id="themeBtn" class="iconbtn" type="button"></button>
+</header>
+
+<main>
+  <section id="view-map" class="view split">
+    <div class="mapwrap">
+      <div class="maptools" hidden>
+        <label for="hlSel">Pages that use</label>
+        <select id="hlSel"><option value="">a file, system or chat…</option></select>
+        <button id="hlClear" class="iconbtn">Clear</button>
+      </div>
+      <div id="mapfit" class="mapfit"><div id="mapgrid" class="map" aria-label="Map of all pages and the connectors between them"></div></div>
+    </div>
+    <aside id="mapPanel" class="panel" aria-live="polite"></aside>
+  </section>
+
+  <section id="view-draw" class="view split3 nopanel" hidden>
+    <div class="canvaswrap">
+      <div id="viewport" class="viewport">
+        <div id="svghost" class="svghost"></div>
+        <div id="stick" class="stick" aria-hidden="true" hidden><div id="stickIn" class="stickin"></div></div>
+        <div id="vscroll" class="vscroll" aria-hidden="true" hidden><div id="vthumb" class="vthumb"></div></div>
+        <!-- the overview: the page in miniature, a thin frame for the part in view; press or drag on it to move the view -->
+        <div id="mini" class="mini" hidden>
+          <div id="miniMap" class="minimap" role="img" aria-label="The page as a plan; the frame is the part in view"><div id="miniFrame" class="miniframe"></div></div>
+          <button id="miniHide" class="minibtn" type="button" title="Hide the overview" aria-label="Hide the overview"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+        </div>
+        <button id="miniShow" class="minibtn minishow" type="button" title="Show the overview" aria-label="Show the overview" hidden><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="1.5" width="12" height="13" rx="2"/><rect x="5" y="5" width="6" height="5" rx="1"/></svg></button>
+        <div id="loading" class="loading" hidden>Loading the drawing…</div>
+        <div id="walkbar" class="walkbar" role="region" aria-label="Walk through" aria-live="polite" hidden></div>
+        <div id="hoChip" class="hochip" aria-live="polite" hidden></div>
+        <div id="hoAsk" class="hoask" role="dialog" aria-label="Open the other page?" hidden></div>
+        <div id="rvBar" class="rvbar" role="status" aria-live="polite" hidden></div>
+      </div>
+    </div>
+    <aside id="drawPanel" class="panel" aria-live="polite"></aside>
+    <div id="pgDock" class="pgdock">
+      <!-- the slim page bar: where you are, the pages joined to it, and the button for all pages (the old three rows open above it) -->
+      <nav id="pgBar" class="pgbar" aria-label="Page">
+        <span class="pgarrows">
+          <button id="pgPrev" class="pgnav" type="button" aria-label="Previous page"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
+          <button id="pgNext" class="pgnav" type="button" aria-label="Next page"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+        </span>
+        <span id="pgCur" class="pgcur"></span>
+        <span class="pgjoin"><span class="pgjl">Joined to</span><span id="pgChips" class="pgchips"></span><button id="pgMore" class="pgmore" type="button" hidden></button></span>
+        <button id="pgAll" class="pgall" type="button" aria-expanded="false" aria-controls="pageList">All pages<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 10 4-4 4 4"/></svg></button>
+      </nav>
+      <nav id="pageList" class="pagebar" aria-label="All pages" hidden></nav>
+    </div>
+  </section>
+
+  <section id="view-files" class="view split" hidden>
+    <div class="fcol">
+      <div class="ftools" id="ftools">
+        <div class="seg" id="fKind"></div>
+        <div class="seg"><input id="fq" type="search" placeholder="Filter by name" aria-label="Filter by name"></div>
+      </div>
+      <div class="fbody" id="fbody"></div>
+    </div>
+    <aside id="filePanel" class="panel" aria-live="polite"></aside>
+  </section>
+</main>
+
+<script src="data.js?v=20261126130428"></script>
+<script src="flow.js?v=20261126130428"></script>
+<script src="app.js?v=20261126130428"></script>
+<script src="updated.js?v=20261126130428"></script>
+</body>
+</html>
